@@ -30,12 +30,12 @@ gitListUpdated(respositoryRoot, {
 	base: "master",
 	head: "HEAD"
 })
+	// Response object is a stream that emits each filename with individual data event
 	.on("data", filename => {
-		// Response object is a stream that emits each filename with individual data event
 		console.log(`Updated file: ${filename}`);
 	})
+	// Response object is also a promise that resolves with a list of updated files
 	.then(fileNames => {
-		// Response object is also a promies that resolves with a list of updated files
 		console.log(`All updated files: ${fileNames}`);
 	});
 ```
@@ -48,7 +48,7 @@ npm test
 
 [nix-build-image]: https://semaphoreci.com/api/v1/medikoo-org/git-list-updated/branches/master/shields_badge.svg
 [nix-build-url]: https://semaphoreci.com/medikoo-org/git-list-updated
-[win-build-image]: https://ci.appveyor.com/api/projects/status/?svg=true
+[win-build-image]: https://ci.appveyor.com/api/projects/status/bj6qtpvem7rqgoas?svg=true
 [win-build-url]: https://ci.appveyor.com/api/project/medikoo/git-list-updated
 [cov-image]: https://img.shields.io/codecov/c/github/medikoo/git-list-updated.svg
 [cov-url]: https://codecov.io/gh/medikoo/git-list-updated
