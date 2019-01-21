@@ -18,6 +18,8 @@ Options:
 
     --base <base> Base to compare against (defaults to 'master')
     --head <head> Head to compare against (defaults to 'HEAD')
+		--ext <ext>   Pass only filenames with given extension ` +
+	`(argument can be passed multiple times)
     --help,            -h  Show this message
 
 `;
@@ -30,7 +32,7 @@ if (boundaryIndex === -1) {
 }
 
 const argv = require("minimist")(process.argv.slice(2, boundaryIndex), {
-	string: ["base", "head"]
+	string: ["base", "head", "ext"]
 });
 
 if (argv.h || argv.help) {
