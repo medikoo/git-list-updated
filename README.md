@@ -15,10 +15,30 @@ Useful when we want to apply certain operations (e.g. lint) only to files that w
 ### Installation
 
 ```bash
-npm install git-list-updated
+npm install -g git-list-updated
 ```
 
 # Usage
+
+## CLI
+
+```bash
+git-list-updated [-h | --help] [--base=<base>] [--head=<head>] [<path>]
+```
+
+If `<path>` is not provided, check is done in repository at current working directory
+
+### Options:
+
+#### `base` (defaults to `master`)
+
+Base branch with which we wish to compare
+
+#### `head` (defaults to `HEAD`)
+
+Target containing the changes that should be investigated
+
+#####
 
 ## Programatically
 
@@ -27,8 +47,8 @@ const gitListUpdated = require("git-list-updated");
 
 gitListUpdated(respositoryRoot, {
 	// All options are optional
-	base: "master",
-	head: "HEAD"
+	base: "master", // Base to compare against
+	head: "HEAD" // Source for comparision
 })
 	// Response object is a stream that emits each filename with individual data event
 	.on("data", filename => {

@@ -11,7 +11,9 @@
   "dependencies": {
     "2-thenable": "1",
     "child-process-ext": "2",
-    "es5-ext": "^0.10.46"
+    "es5-ext": "^0.10.46",
+    "essentials": "1",
+    "minimist": "^1.2"
   },
   "devDependencies": {
     "chai": "^4.2",
