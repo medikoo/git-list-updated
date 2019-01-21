@@ -4,7 +4,8 @@
   "description": "Resolve list of updated (and existing) files between two branches",
   "author": "Mariusz Nowak <medyk@medikoo.com> (http://www.medikoo.com/)",
   "bin": {
-    "git-list-updated": "./bin/git-list-updated.js"
+    "git-list-updated": "./bin/git-list-updated.js",
+    "pipe-git-updated": "./bin/pipe-git-updated.js"
   },
   "keywords": [
     "git",

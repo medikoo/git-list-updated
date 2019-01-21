@@ -22,34 +22,49 @@ npm install -g git-list-updated
 
 ## CLI
 
+### git-list-updated
+
+List updated files
+
 ```bash
 git-list-updated [-h | --help] [--base=<base>] [--head=<head>] [<path>]
 ```
 
 If `<path>` is not provided, check is done in repository at current working directory
 
-### Options:
+#### Options:
 
-#### `base` (defaults to `master`)
+##### `base` (defaults to `master`)
 
 Base branch with which we wish to compare
 
-#### `head` (defaults to `HEAD`)
+##### `head` (defaults to `HEAD`)
 
 Target containing the changes that should be investigated
 
-#####
+### pipe-git-updated
+
+Pipe output of git-list-updated into other command.
+On \*nix systems that could simply be achieved via:
+
+```bash
+git-list-updated | command
+```
+
+Purpose of this util is to provide cross environment solution that can also work on Windows
+
+```bash
+pipe-git-updated [<...git-list-updated-args>] -- <targetComand> [<...target-command-args>]
+```
 
 ## Programatically
 
-```javascript
-const gitListUpdated = require("git-list-updated");
+### `git-list-updated`
 
-gitListUpdated(respositoryRoot, {
-	// All options are optional
-	base: "master", // Base to compare against
-	head: "HEAD" // Source for comparision
-})
+```javascript
+const gitListUpdated = require("git-list-updated/pipe");
+
+gitListUpdated(respositoryRoot, {})
 	// Response object is a stream that emits each filename with individual data event
 	.on("data", filename => {
 		console.log(`Updated file: ${filename}`);
@@ -58,6 +73,20 @@ gitListUpdated(respositoryRoot, {
 	.then(fileNames => {
 		console.log(`All updated files: ${fileNames}`);
 	});
+```
+
+### `git-list-updated/pipe`
+
+```javascript
+const pipeGitUpdated = require("git-list-updated/pipe");
+
+pipeGitUpdated(respositoryRoot, [targetCliCommand, targetCliCommandArg1, targetCliCommandArg2], {
+ 	// git-list-updated options
+	base: "master", // Base to compare against
+	head: "HEAD" // Source for comparision
+	// pipe specific optons
+	stdio: "inherit" // Override stdio setting of targetCli command
+});
 ```
 
 ### Tests
