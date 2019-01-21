@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Resolve list of updated (and existing) files between two branches",
   "author": "Mariusz Nowak <medyk@medikoo.com> (http://www.medikoo.com/)",
+  "bin": {
+    "git-list-updated": "./bin/git-list-updated.js"
+  },
   "keywords": [
     "git",
     "diff"
