@@ -53,7 +53,7 @@ Pipe output of git-list-updated into other command.
 On \*nix systems that could simply be achieved via:
 
 ```bash
-git-list-updated | command
+git-list-updated [<...git-list-updated-args>] | <targetComand> [<...target-command-args>]
 ```
 
 Purpose of this util is to provide cross environment solution that can also work on Windows
