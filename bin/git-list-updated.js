@@ -8,7 +8,8 @@ const meta = require("../package");
 
 const argv = require("minimist")(process.argv.slice(2), { string: ["base", "head", "ext"] });
 
-const usage = `git-list-updated v${ meta.version }
+const usage =
+	`git-list-updated v${ meta.version }
 
 Usage: git-list-updated [-h | --help] [--base=<base>] [--head=<head>] [<path>]
 
@@ -19,7 +20,8 @@ Options:
 
     --base <base> Base to compare against (defaults to 'master')
 		--head <head> Head to compare against (defaults to 'HEAD')
-		--ext <ext>   List only files with given extension (argument can be passed multiple times)
+		--ext <ext>   List only filenames with given extension ` +
+	`(argument can be passed multiple times)
     --help,            -h  Show this message
 
 `;
