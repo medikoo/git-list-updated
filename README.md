@@ -27,7 +27,7 @@ npm install -g git-list-updated
 List updated files
 
 ```bash
-git-list-updated [-h | --help] [--base=<base>] [--head=<head>] [<path>]
+git-list-updated [-h | --help] [--base=<base>] [--head=<head>] [--ext=<ext>] [<path>]
 ```
 
 If `<path>` is not provided, check is done in repository at current working directory
@@ -41,6 +41,11 @@ Base branch with which we wish to compare
 ##### `head` (defaults to `HEAD`)
 
 Target containing the changes that should be investigated
+
+##### `ext`
+
+List only files with specific extensions. Multiple extensions can be chosen by passing arg multiple times.
+If not passed, all files are listed
 
 ### pipe-git-updated
 
@@ -64,7 +69,11 @@ pipe-git-updated [<...git-list-updated-args>] -- <targetComand> [<...target-comm
 ```javascript
 const gitListUpdated = require("git-list-updated/pipe");
 
-gitListUpdated(respositoryRoot, {})
+gitListUpdated(respositoryRoot, {
+	base: "master", // Base to compare against
+	head: "HEAD" // Source for comparision
+	ext: [] // Limit output to given extensions
+})
 	// Response object is a stream that emits each filename with individual data event
 	.on("data", filename => {
 		console.log(`Updated file: ${filename}`);

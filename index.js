@@ -10,9 +10,10 @@ const isObject      = require("es5-ext/object/is-object")
     , spawn         = require("child-process-ext/spawn");
 
 class ExistingFilesFilter extends Transform {
-	constructor(dirname, spawnPromise) {
+	constructor(dirname, spawnPromise, extensions) {
 		super({ decodeStrings: false, encoding: "utf8" });
 		this.dirname = dirname;
+		this.extensions = extensions;
 		this.files = [];
 		toThenable(
 			this,
@@ -25,6 +26,12 @@ class ExistingFilesFilter extends Transform {
 		);
 	}
 	_transform(chunk, encoding, callback) {
+		if (this.extensions) {
+			if (!this.extensions.some(extension => chunk.endsWith(`.${ extension }`))) {
+				callback();
+				return;
+			}
+		}
 		lstat(resolve(this.dirname, chunk), error => {
 			if (error) {
 				if (error.code === "ENOENT") {
@@ -44,7 +51,8 @@ module.exports = (cwd, options = {}) => {
 		cwd = resolve(ensureString(cwd));
 		if (!isObject(options)) options = {};
 		const base = isValue(options.base) ? ensureString(options.base) : "master"
-		    , head = isValue(options.head) ? ensureString(options.head) : "HEAD";
+		    , head = isValue(options.head) ? ensureString(options.head) : "HEAD"
+		    , extensions = isObject(options.ext) ? Array.from(options.ext).map(ensureString) : null;
 
 		const spawnPromise = spawn("git", ["diff", "--name-only", `${ base }...${ head }`], {
 			cwd,
@@ -52,7 +60,7 @@ module.exports = (cwd, options = {}) => {
 		});
 		const { stdout } = spawnPromise;
 		if (!stdout) return spawnPromise;
-		return stdout.pipe(new ExistingFilesFilter(cwd, spawnPromise));
+		return stdout.pipe(new ExistingFilesFilter(cwd, spawnPromise, extensions));
 	} catch (error) {
 		return Promise.reject(error);
 	}

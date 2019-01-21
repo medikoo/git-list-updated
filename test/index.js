@@ -41,4 +41,9 @@ describe("(main)", () => {
 		promise.on("data", data => emitted.push(data));
 		promise.then(() => assert.deepEqual(emitted, existingList));
 	});
+	it("Should filter according to \"ext\" option", () =>
+		listUpdated(testPath, { ext: ["js"] }).then(result =>
+			assert.deepEqual(result, existingList.filter(filename => filename.endsWith(".js")))
+		)
+	);
 });

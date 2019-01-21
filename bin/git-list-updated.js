@@ -6,7 +6,7 @@ require("essentials");
 
 const meta = require("../package");
 
-const argv = require("minimist")(process.argv.slice(2), { string: ["base", "head"] });
+const argv = require("minimist")(process.argv.slice(2), { string: ["base", "head", "ext"] });
 
 const usage = `git-list-updated v${ meta.version }
 
@@ -18,7 +18,8 @@ at <head> against <base> branch.
 Options:
 
     --base <base> Base to compare against (defaults to 'master')
-    --head <head> Head to compare against (defaults to 'HEAD')
+		--head <head> Head to compare against (defaults to 'HEAD')
+		--ext <ext>   List only files with given extension (argument can be passed multiple times)
     --help,            -h  Show this message
 
 `;
@@ -34,5 +35,7 @@ if (argv.v || argv.version) {
 }
 
 const path = argv._[0] || process.cwd();
+
+if (typeof argv.ext === "string") argv.ext = [argv.ext];
 
 require("../")(path, argv).on("data", data => process.stdout.write(`${ data }\n`));
