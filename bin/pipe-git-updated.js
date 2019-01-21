@@ -46,6 +46,7 @@ if (argv.v || argv.version) {
 }
 
 const path = argv._[0] || process.cwd();
+if (typeof argv.ext === "string") argv.ext = [argv.ext];
 
 require("../pipe")(path, process.argv.slice(boundaryIndex + 1), argv).catch(error => {
 	if (typeof error.code !== "number") throw error;
