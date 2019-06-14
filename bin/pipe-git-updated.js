@@ -50,5 +50,6 @@ if (typeof argv.ext === "string") argv.ext = [argv.ext];
 
 require("../pipe")(path, process.argv.slice(boundaryIndex + 1), argv).catch(error => {
 	if (typeof error.code !== "number") throw error;
+	process.stderr.write(`${ error.message }\n`);
 	process.exit(error.code);
 });
