@@ -58,6 +58,20 @@ module.exports = (cwd, options = {}) => {
 			cwd,
 			split: true
 		});
+		spawnPromise.catch(error => {
+			if (!error.stderrBuffer) return;
+			const errorMessage = String(error.stderrBuffer);
+			if (errorMessage.includes("unknown revision or path not in the working tree")) {
+				const refs = [base, head].filter(ref => ref !== "HEAD");
+				if (refs.length > 1) {
+					error.message = `Either '${ base }' or '${ head }' is not in the working tree`;
+				} else {
+					error.message = `'${ refs[0] }' is not in the working tree`;
+				}
+			} else {
+				error.message = errorMessage;
+			}
+		});
 		const { stdout } = spawnPromise;
 		if (!stdout) return spawnPromise;
 		return stdout.pipe(new ExistingFilesFilter(cwd, spawnPromise, extensions));
