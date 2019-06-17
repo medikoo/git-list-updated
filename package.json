@@ -1,68 +1,68 @@
 {
-  "name": "git-list-updated",
-  "version": "1.2.0",
-  "description": "Resolve list of updated (and existing) files between two branches",
-  "author": "Mariusz Nowak <medyk@medikoo.com> (http://www.medikoo.com/)",
-  "bin": {
-    "git-list-updated": "./bin/git-list-updated.js",
-    "pipe-git-updated": "./bin/pipe-git-updated.js"
-  },
-  "keywords": [
-    "git",
-    "diff"
-  ],
-  "repository": "medikoo/git-list-updated",
-  "dependencies": {
-    "2-thenable": "^1.0.0",
-    "child-process-ext": "^2.0.0",
-    "es5-ext": "^0.10.50",
-    "essentials": "^1.0.0",
-    "minimist": "^1.2.0"
-  },
-  "devDependencies": {
-    "chai": "^4.2.0",
-    "eslint": "^5.16.0",
-    "eslint-config-medikoo": "^2.3.0",
-    "mocha": "^6.1.4",
-    "nyc": "^14.1.1",
-    "prettier-elastic": "^1.18.2",
-    "proxyquire": "^2.1.0"
-  },
-  "eslintConfig": {
-    "extends": "medikoo",
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "overrides": [
-      {
-        "files": "test/**/*.js",
-        "env": {
-          "mocha": true
-        }
-      }
-    ]
-  },
-  "prettier": {
-    "printWidth": 100,
-    "tabWidth": 4,
-    "overrides": [
-      {
-        "files": [
-          "*.md"
-        ],
-        "options": {
-          "tabWidth": 2
-        }
-      }
-    ]
-  },
-  "scripts": {
-    "coverage": "nyc --reporter=lcov --reporter=html --reporter=text-summary npm test",
-    "check-coverage": "npm run coverage && nyc check-coverage --statements 80 --function 80 --branches 50 --lines 80",
-    "lint": "eslint --ignore-path=.gitignore .",
-    "prettify": "prettier --write --ignore-path .gitignore '**/*.{css,html,js,json,md,yaml,yml}'",
-    "test": "mocha"
-  },
-  "license": "ISC"
+	"name": "git-list-updated",
+	"version": "1.2.0",
+	"description": "Resolve list of updated (and existing) files between two branches",
+	"author": "Mariusz Nowak <medyk@medikoo.com> (http://www.medikoo.com/)",
+	"bin": {
+		"git-list-updated": "./bin/git-list-updated.js",
+		"pipe-git-updated": "./bin/pipe-git-updated.js"
+	},
+	"keywords": [
+		"git",
+		"diff"
+	],
+	"repository": "medikoo/git-list-updated",
+	"dependencies": {
+		"2-thenable": "^1.0.0",
+		"child-process-ext": "^2.0.0",
+		"es5-ext": "^0.10.50",
+		"essentials": "^1.0.0",
+		"minimist": "^1.2.0"
+	},
+	"devDependencies": {
+		"chai": "^4.2.0",
+		"eslint": "^5.16.0",
+		"eslint-config-medikoo": "^2.3.0",
+		"mocha": "^6.1.4",
+		"nyc": "^14.1.1",
+		"prettier-elastic": "^1.18.2",
+		"proxyquire": "^2.1.0"
+	},
+	"eslintConfig": {
+		"extends": "medikoo",
+		"root": true,
+		"env": {
+			"node": true
+		},
+		"overrides": [
+			{
+				"files": "test/**/*.js",
+				"env": {
+					"mocha": true
+				}
+			}
+		]
+	},
+	"prettier": {
+		"printWidth": 100,
+		"tabWidth": 4,
+		"overrides": [
+			{
+				"files": [
+					"*.md"
+				],
+				"options": {
+					"tabWidth": 2
+				}
+			}
+		]
+	},
+	"scripts": {
+		"coverage": "nyc --reporter=lcov --reporter=html --reporter=text-summary npm test",
+		"check-coverage": "npm run coverage && nyc check-coverage --statements 80 --function 80 --branches 50 --lines 80",
+		"lint": "eslint --ignore-path=.gitignore .",
+		"prettify": "prettier --write --ignore-path .gitignore '**/*.{css,html,js,json,md,yaml,yml}'",
+		"test": "mocha"
+	},
+	"license": "ISC"
 }
