@@ -9,24 +9,49 @@ const testList = ["LICENSE", "foo", "test/index.js", "elo"]
     , existingList = ["LICENSE", "test/index.js"];
 
 const listUpdated = proxyquire("../", {
-	"child-process-ext/spawn": () => {
+	"child-process-ext/spawn": (cmdName, [, , range]) => {
 		let onResolve;
-		const promise = new Promise(resolve => {
-			onResolve = () => resolve({ stdoutBuffer: `${ testList.join("\n") }\n` });
-		});
-		let index = 0;
-		promise.stdout = new Readable({
-			encoding: "utf8",
-			read() {
-				if (index === testList.length) {
-					this.push(null);
-					onResolve();
-				} else {
-					this.push(testList[index++], "utf8");
+		if (range === "master...HEAD") {
+			const promise = new Promise(resolve => {
+				onResolve = () => resolve({ stdoutBuffer: `${ testList.join("\n") }\n` });
+			});
+			let index = 0;
+			promise.stdout = new Readable({
+				encoding: "utf8",
+				read() {
+					if (index === testList.length) {
+						this.push(null);
+						onResolve();
+					} else {
+						this.push(testList[index++], "utf8");
+					}
 				}
-			}
-		});
-		return promise;
+			});
+			return promise;
+		}
+		if (range === "foo...HEAD") {
+			const promise = new Promise((resolve, reject) => {
+				onResolve = () =>
+					reject(
+						Object.assign(new Error("Error"), {
+							stderrBuffer: [
+								"fatal: ambiguous argument 'master...HEAD': " +
+									"unknown revision or path not in the working tree.",
+								"Use '--' to separate paths from revisions, like this:",
+								"git <command> [<revision>...] -- [<file>...]"
+							].join("\n")
+						})
+					);
+			});
+			promise.stdout = new Readable({
+				encoding: "utf8",
+				read() {
+					onResolve();
+					this.push(null);
+				}
+			});
+			return promise;
+		}
 	}
 });
 
@@ -44,6 +69,12 @@ describe("(main)", () => {
 	it("Should filter according to \"ext\" option", () =>
 		listUpdated(testPath, { ext: ["js"] }).then(result =>
 			assert.deepEqual(result, existingList.filter(filename => filename.endsWith(".js")))
+		)
+	);
+	it("Should reject with meaningful message", () =>
+		listUpdated(testPath, { base: "foo", ext: ["js"] }).then(
+			() => { throw new Error("Unexpected"); },
+			error => { assert.equal(error.message, "'foo' is not in the working tree"); }
 		)
 	);
 });
