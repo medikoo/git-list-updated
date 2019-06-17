@@ -52,6 +52,7 @@ const listUpdated = proxyquire("../", {
 			});
 			return promise;
 		}
+		return null;
 	}
 });
 
