@@ -54,11 +54,11 @@ module.exports = (cwd, options = {}) => {
 		    , head = isValue(options.head) ? ensureString(options.head) : "HEAD"
 		    , extensions = isObject(options.ext) ? Array.from(options.ext).map(ensureString) : null;
 
-		const spawnPromise = spawn("git", ["diff", "--name-only", `${ base }...${ head }`], {
+		const diffNamesDeferred = spawn("git", ["diff", "--name-only", `${ base }...${ head }`], {
 			cwd,
 			split: true
 		});
-		spawnPromise.catch(error => {
+		diffNamesDeferred.catch(error => {
 			if (!error.stderrBuffer) return;
 			const errorMessage = String(error.stderrBuffer);
 			if (errorMessage.includes("unknown revision or path not in the working tree")) {
@@ -72,9 +72,9 @@ module.exports = (cwd, options = {}) => {
 				error.message = errorMessage;
 			}
 		});
-		const { stdout } = spawnPromise;
-		if (!stdout) return spawnPromise;
-		return stdout.pipe(new ExistingFilesFilter(cwd, spawnPromise, extensions));
+		const { stdout } = diffNamesDeferred;
+		if (!stdout) return diffNamesDeferred;
+		return stdout.pipe(new ExistingFilesFilter(cwd, diffNamesDeferred, extensions));
 	} catch (error) {
 		return Promise.reject(error);
 	}
