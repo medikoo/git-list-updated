@@ -1,18 +1,19 @@
 "use strict";
 
-const isObject      = require("es5-ext/object/is-object")
-    , isValue       = require("es5-ext/object/is-value")
-    , ensureString  = require("es5-ext/object/validate-stringifiable-value")
-    , { lstat }     = require("fs")
-    , { resolve }   = require("path")
-    , { Transform } = require("stream")
-    , toThenable    = require("2-thenable")
-    , spawn         = require("child-process-ext/spawn");
+const isObject         = require("es5-ext/object/is-object")
+    , isValue          = require("es5-ext/object/is-value")
+    , ensureString     = require("es5-ext/object/validate-stringifiable-value")
+    , { lstat }        = require("fs")
+    , { resolve, sep } = require("path")
+    , { Transform }    = require("stream")
+    , toThenable       = require("2-thenable")
+    , spawn            = require("child-process-ext/spawn");
 
 class ExistingFilesFilter extends Transform {
-	constructor(dirname, spawnPromise, extensions) {
+	constructor(repoRootDeferred, spawnPromise, dirname, extensions) {
 		super({ decodeStrings: false, encoding: "utf8" });
-		this.dirname = dirname;
+		this.repoRootDeferred = repoRootDeferred;
+		this.dirname = `${ dirname }${ sep }`;
 		this.extensions = extensions;
 		this.files = [];
 		toThenable(
@@ -21,6 +22,7 @@ class ExistingFilesFilter extends Transform {
 				this.on("error", reject);
 				this.on("data", chunk => this.files.push(chunk));
 				spawnPromise.catch(reject);
+				repoRootDeferred.catch(reject);
 				this.on("end", () => promiseResolve(spawnPromise.then(() => this.files)));
 			})
 		);
@@ -32,16 +34,23 @@ class ExistingFilesFilter extends Transform {
 				return;
 			}
 		}
-		lstat(resolve(this.dirname, chunk), error => {
-			if (error) {
-				if (error.code === "ENOENT") {
-					callback();
-					return;
-				}
-				callback(error);
+		this.repoRootDeferred.then(repoRoot => {
+			const filename = resolve(repoRoot, chunk);
+			if (!filename.startsWith(this.dirname)) {
+				callback();
 				return;
 			}
-			callback(null, chunk);
+			lstat(filename, error => {
+				if (error) {
+					if (error.code === "ENOENT") {
+						callback();
+						return;
+					}
+					callback(error);
+					return;
+				}
+				callback(null, filename.slice(this.dirname.length));
+			});
 		});
 	}
 }
@@ -58,6 +67,9 @@ module.exports = (cwd, options = {}) => {
 			cwd,
 			split: true
 		});
+		const repoRootDeferred = spawn("git", ["rev-parse", "--show-toplevel"], { cwd }).then(
+			({ stdoutBuffer }) => String(stdoutBuffer).trim()
+		);
 		diffNamesDeferred.catch(error => {
 			if (!error.stderrBuffer) return;
 			const errorMessage = String(error.stderrBuffer);
@@ -74,7 +86,9 @@ module.exports = (cwd, options = {}) => {
 		});
 		const { stdout } = diffNamesDeferred;
 		if (!stdout) return diffNamesDeferred;
-		return stdout.pipe(new ExistingFilesFilter(cwd, diffNamesDeferred, extensions));
+		return stdout.pipe(
+			new ExistingFilesFilter(repoRootDeferred, diffNamesDeferred, cwd, extensions)
+		);
 	} catch (error) {
 		return Promise.reject(error);
 	}

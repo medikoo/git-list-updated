@@ -8,6 +8,8 @@ const { resolve }  = require("path")
 const testList = ["LICENSE", "foo", "test/index.js", "elo"]
     , existingList = ["LICENSE", "test/index.js"];
 
+const testPath = resolve(__dirname, "..");
+
 const listUpdated = proxyquire("../", {
 	"child-process-ext/spawn": (cmdName, [method, , range]) => {
 		let onResolve;
@@ -59,13 +61,13 @@ const listUpdated = proxyquire("../", {
 					default:
 						return Promise.reject(new Error(`Unrecognized diff range ${ range }`));
 				}
+			case "rev-parse":
+				return Promise.resolve({ stdoutBuffer: Buffer.from(`${ testPath }\n`) });
 			default:
 				return Promise.reject(new Error(`Unrecognized method ${ method }`));
 		}
 	}
 });
-
-const testPath = resolve(__dirname, "..");
 
 describe("(main)", () => {
 	it("Should resolve with expected list", () =>
