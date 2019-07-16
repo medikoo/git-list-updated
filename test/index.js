@@ -9,50 +9,59 @@ const testList = ["LICENSE", "foo", "test/index.js", "elo"]
     , existingList = ["LICENSE", "test/index.js"];
 
 const listUpdated = proxyquire("../", {
-	"child-process-ext/spawn": (cmdName, [, , range]) => {
+	"child-process-ext/spawn": (cmdName, [method, , range]) => {
 		let onResolve;
-		if (range === "master...HEAD") {
-			const promise = new Promise(resolve => {
-				onResolve = () => resolve({ stdoutBuffer: `${ testList.join("\n") }\n` });
-			});
-			let index = 0;
-			promise.stdout = new Readable({
-				encoding: "utf8",
-				read() {
-					if (index === testList.length) {
-						this.push(null);
-						onResolve();
-					} else {
-						this.push(testList[index++], "utf8");
+		switch (method) {
+			case "diff":
+				switch (range) {
+					case "master...HEAD": {
+						const promise = new Promise(resolve => {
+							onResolve = () =>
+								resolve({ stdoutBuffer: `${ testList.join("\n") }\n` });
+						});
+						let index = 0;
+						promise.stdout = new Readable({
+							encoding: "utf8",
+							read() {
+								if (index === testList.length) {
+									this.push(null);
+									onResolve();
+								} else {
+									this.push(testList[index++], "utf8");
+								}
+							}
+						});
+						return promise;
 					}
+					case "foo...HEAD": {
+						const promise = new Promise((resolve, reject) => {
+							onResolve = () =>
+								reject(
+									Object.assign(new Error("Error"), {
+										stderrBuffer: [
+											"fatal: ambiguous argument 'master...HEAD': " +
+												"unknown revision or path not in the working tree.",
+											"Use '--' to separate paths from revisions, like this:",
+											"git <command> [<revision>...] -- [<file>...]"
+										].join("\n")
+									})
+								);
+						});
+						promise.stdout = new Readable({
+							encoding: "utf8",
+							read() {
+								onResolve();
+								this.push(null);
+							}
+						});
+						return promise;
+					}
+					default:
+						return Promise.reject(new Error(`Unrecognized diff range ${ range }`));
 				}
-			});
-			return promise;
+			default:
+				return Promise.reject(new Error(`Unrecognized method ${ method }`));
 		}
-		if (range === "foo...HEAD") {
-			const promise = new Promise((resolve, reject) => {
-				onResolve = () =>
-					reject(
-						Object.assign(new Error("Error"), {
-							stderrBuffer: [
-								"fatal: ambiguous argument 'master...HEAD': " +
-									"unknown revision or path not in the working tree.",
-								"Use '--' to separate paths from revisions, like this:",
-								"git <command> [<revision>...] -- [<file>...]"
-							].join("\n")
-						})
-					);
-			});
-			promise.stdout = new Readable({
-				encoding: "utf8",
-				read() {
-					onResolve();
-					this.push(null);
-				}
-			});
-			return promise;
-		}
-		return null;
 	}
 });
 
