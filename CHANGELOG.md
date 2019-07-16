@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/medikoo/git-list-updated/compare/v1.2.0...v1.2.1) (2019-07-16)
+
+### Bug Fixes
+
+- Fix repository root resolution (assumption) ([bea55a8](https://github.com/medikoo/git-list-updated/commit/bea55a8))
+
+### Tests
+
+- Fix async test ([0904d90](https://github.com/medikoo/git-list-updated/commit/0904d90))
+- Improve mock resolution ([1cc5194](https://github.com/medikoo/git-list-updated/commit/1cc5194))
+
 ## [1.2.0](https://github.com/medikoo/git-list-updated/compare/v1.1.2...v1.2.0) (2019-06-17)
 
 ### Bug Fixes
