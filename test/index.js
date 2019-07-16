@@ -74,7 +74,7 @@ describe("(main)", () => {
 	it("Should emit 'data' events with existing files", () => {
 		const emitted = [], promise = listUpdated(testPath);
 		promise.on("data", data => emitted.push(data));
-		promise.then(() => assert.deepEqual(emitted, existingList));
+		return promise.then(() => assert.deepEqual(emitted, existingList));
 	});
 	it("Should filter according to \"ext\" option", () =>
 		listUpdated(testPath, { ext: ["js"] }).then(result =>
