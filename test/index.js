@@ -1,12 +1,12 @@
 "use strict";
 
-const { resolve }  = require("path")
-    , { Readable } = require("stream")
-    , { assert }   = require("chai")
-    , proxyquire   = require("proxyquire");
+const { resolve, sep } = require("path")
+    , { Readable }     = require("stream")
+    , { assert }       = require("chai")
+    , proxyquire       = require("proxyquire");
 
-const testList = ["LICENSE", "foo", "test/index.js", "elo"]
-    , existingList = ["LICENSE", "test/index.js"];
+const testList = ["LICENSE", "foo", `test${ sep }index.js`, "elo"]
+    , existingList = ["LICENSE", `test${ sep }index.js`];
 
 const testPath = resolve(__dirname, "..");
 
