@@ -76,7 +76,11 @@
 		"coverage": "nyc --reporter=lcov --reporter=html --reporter=text-summary npm test",
 		"check-coverage": "npm run coverage && nyc check-coverage --statements 80 --function 80 --branches 50 --lines 80",
 		"lint": "eslint --ignore-path=.gitignore .",
+		"lint:updated": "./bin/pipe-git-updated.js --ext=js -- eslint --ignore-pattern '!*'",
+		"prettier-check": "prettier -c --ignore-path .gitignore \"**/*.{css,html,js,json,md,yaml,yml}\"",
+		"prettier-check:updated": "./bin/pipe-git-updated.js --ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier -c",
 		"prettify": "prettier --write --ignore-path .gitignore '**/*.{css,html,js,json,md,yaml,yml}'",
+		"prettify:updated": "./bin/pipe-git-updated.js --ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier --write",
 		"test": "mocha"
 	},
 	"license": "ISC"
